@@ -10,7 +10,7 @@ class Index():
 
     def __init__(self):
         self.ix = ""
-        self.schema = Schema(path = ID(unique=True), content=TEXT)
+        self.schema = ""
         self.writer = ""
         
 
@@ -23,5 +23,27 @@ class Index():
         writer = ix.indexname()
         writer.updateDocument(path=get_path(), getContent())
         writer.commit()
+
+    def cleanIndex(dirname)
+        ix = index.create_in(dirname, schema=getSchema())
+        writer = ix.writer()
+        addDoc(writer, gatherDocs())
+        writer.commit()
+
+    def indexMyDocs(dirname, clean=False)
+        if clean:
+            cleanIndex(dirname)
+        else:
+            incrementalIndex(dirname)
+
+    def incrementalIndex(dirname)
+        ix = index.open_dir(dirname)
+
+        # The set of all paths in the index
+        indexedPaths = set()
+
+        # The set of all paths we need to re-index
+        to_index = set()
+
 
 
