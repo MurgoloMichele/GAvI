@@ -7,21 +7,21 @@ from whoosh.qparser import QueryParser
 from os import listdir
 from os.path import isfile, join
 
-def get_schema():
+def getSchema():
     return Schema(path=ID(unique=True, stored=True), content=TEXT)
 
-def get_path():
+def getPath():
     return "/home/simone/Documents/UNI/GestioneAvanzataInfo/esercizi"
 
-def get_index_path():
+def getIndexPath():
     return "index"
 
-def gather_docs():
+def gatherDocs():
     "gather documents into dir and put into an array files"
     files = [f for f in listdir(get_path()) if isfile(join(get_path(), f))]
     return files
 
-def clean_index(dirname):
+def cleanIndex(dirname):
     if not os.path.exists(dirname):
         os.mkdir(dirname)
     # Always create the index from scratch
@@ -36,14 +36,8 @@ def clean_index(dirname):
 
     writer.commit()
 
-def add_doc(writer, path):
+def addDoc(writer, path):
     fileobj = open(path, "rb")
     content = fileobj.read()
     fileobj.close()
     writer.add_document(path=unicode(path), content=unicode(content))
-
-# MAIN
-clean_index(get_index_path())
-
-# with ix.searcher() as searcher:
-#     list(searcher.lexicon("content"))
