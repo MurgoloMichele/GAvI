@@ -1,14 +1,21 @@
 # recupero documenti dalla dir e inserirli in un indice
 import os, os.path, time
-from whoosh.index import create_in
-from whoosh.index import open_dir
+from whoosh.index import *
 from whoosh.fields import *
-from whoosh.qparser import QueryParser
+from whoosh.formats import *
+
 from os import listdir
 from os.path import isfile, join
 
 def getSchema():
-    return Schema(path=ID(unique=True, stored=True), content=TEXT)
+    return Schema(
+            path=ID(unique=True, stored=True),
+            title=TEXT(stored=True),
+            authors=KEYWORD(stored=True, commas=True, scorable=True, lowercase=True),
+            pubdate=TEXT(stored=True),
+            abstract=TEXT(vector=Positions),
+            content=TEXT(vector=Positions)
+            )
 
 def getPath():
     return "/home/simone/Documents/UNI/GestioneAvanzataInfo/esercizi"
@@ -28,8 +35,4 @@ def gatherDocs():
     return files
 
 
-def addDoc(writer, path):
-    fileobj = open(path, "rb")
-    content = fileobj.read()
-    fileobj.close()
-    writer.add_document(path=unicode(path), content=unicode(content))
+

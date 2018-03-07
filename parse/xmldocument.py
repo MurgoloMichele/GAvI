@@ -17,7 +17,7 @@ class XMLDocument(xml.sax.ContentHandler):
         self.state = XMLDocument.PARSE_NONE
         self.title = ""
         self.authors = []
-        self.date = ""
+        self.date = "1/1/1970"
         self.abstract = ""
         self.body = ""
 

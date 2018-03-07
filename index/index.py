@@ -1,60 +1,44 @@
-import os, os.path
+import os.path
 from whoosh import index
+from docretrieve import *
 
-if not os.path.exists("indexdir"):
-    os.mkdir("indexdir")
 
-from docRetrieve import *
+class DocumentIndex():
 
-class Index():
-
-    def __init__(self):
+    def __init__(self, schema):
         # Index object
-        self.ix = ""
+        self.ix = None
 
         # The schema specifies the fields of documents in an index
-        self.schema = ""
-
-        # Writer object. Creating a writer locks the index for writing
-        # so only one thread/process at a time can have a writer open
-        self.writer = ""
-
-        # The set of all paths in the index
-        self.indexed_paths = ""
-
-        # Time of index
-        self.indexed_time = ""
-
-        # Fields of the document
-        self.fields = ""
-
-        # Last modification time of the document
-        self.mtime = ""
-
-        # Searcher object
-        self.searcher = ""
-
-        # The set of all paths to re-index
-        self.to_index = ""
-        
-
-    # Method to re-index a document
-    def updateDocument(self):
-        ix = index.create_in("index")
-        writer = ix.writer()
-        writer.addDoc(writer, getPath())
-        writer.commit()
-        
-        writer = ix.indexname()
-        writer.updateDocument(path=getPath(), content=getContent())
-        writer.commit()
+        self.schema = schema
 
     # Method to index all the documents from scratch
     def cleanIndex(self, dirname):
-        ix = index.create_in(dirname, schema=getSchema())
-        writer = ix.writer()
-        addDoc(writer, gatherDocs())
+        self.ix = index.create_in(dirname, schema=self.schema)
+        writer = self.ix.writer()
         writer.commit()
+
+    def open(self, dir):
+        self.ix = index.open_dir(dir)
+
+    def addDoc(self, path, doc):
+        writer = self.ix.writer()
+        writer.add_document(path=(path), title=(doc.title), authors=(",".join(doc.authors)),pubdate=(doc.date), abstract=(doc.abstract),content=(doc.body))
+        writer.commit(optimize=True)
+
+
+    # Method to re-index a document
+    def updateDocument(self):
+        self.ix = index.create_in("index")
+        writer = self.ix.writer()
+        writer.addDoc(writer, getPath())
+        writer.commit()
+        
+        writer = self.ix.indexname()
+        writer.updateDocument(path=getPath(), content=getContent())
+        writer.commit(optimize=True)
+
+   
 
     def indexMyDocs(self, dirname, clean=False):
         if clean:
@@ -64,7 +48,7 @@ class Index():
 
     # Method to update only the documents that have changed
     def incrementalIndex(self, dirname):
-        ix = index.open_dir(dirname)
+        self.ix = index.open_dir(dirname)
 
         # The set of all paths in the index
         indexed_paths = set()
@@ -72,8 +56,8 @@ class Index():
         # The set of all paths we need to re-index
         to_index = set()
 
-        with ix.searcher() as searcher:
-            writer = ix.writer()
+        with self.ix.searcher() as searcher:
+            writer = self.ix.writer()
 
             # Loop opver the stored fields in the index
             for fields in searcher.all_stored_fields():

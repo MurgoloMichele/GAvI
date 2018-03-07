@@ -2,7 +2,7 @@ import xml.sax
 from os import listdir
 from os.path import isfile, join, splitext
 
-from src.xmldocument import XMLDocument
+from xmldocument import XMLDocument
 
 
 def getFileList(dir, type):
