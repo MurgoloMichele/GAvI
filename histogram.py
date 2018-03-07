@@ -1,5 +1,5 @@
-# sudo apt-get install python-matplotlib
-# sudo apt-get install python-tk
+# sudo apt-get install python3-matplotlib
+# sudo apt-get install python3-tk
 
 import numpy as np
 import matplotlib.pyplot as plt
