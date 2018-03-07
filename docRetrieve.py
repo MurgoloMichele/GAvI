@@ -1,5 +1,5 @@
 # recupero documenti dalla dir e inserirli in un indice
-import os, os.path
+import os, os.path, time
 from whoosh.index import create_in
 from whoosh.index import open_dir
 from whoosh.fields import *
@@ -12,6 +12,12 @@ def getSchema():
 
 def getPath():
     return "/home/simone/Documents/UNI/GestioneAvanzataInfo/esercizi"
+
+def getModTime(pathToFile):
+    return time.ctime(os.path.getmtime(pathToFile))
+
+def getCreationTime(pathToFile):
+    return time.ctime(os.path.getctime(pathToFile))
 
 def getIndexPath():
     return "index"
