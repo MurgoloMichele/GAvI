@@ -1,38 +1,33 @@
 # recupero documenti dalla dir e inserirli in un indice
-import os, os.path, time
 from whoosh.index import *
 from whoosh.fields import *
 from whoosh.formats import *
+from whoosh.analysis import *
 
+
+import time
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join, splitext
+
 
 def getSchema():
     return Schema(
             path=ID(unique=True, stored=True),
-            title=TEXT(stored=True),
+            title=TEXT(analyzer=StemmingAnalyzer()),
             authors=KEYWORD(stored=True, commas=True, scorable=True, lowercase=True),
-            pubdate=TEXT(stored=True),
-            abstract=TEXT(vector=Positions),
-            content=TEXT(vector=Positions)
+            pubdate=DATETIME(stored=True),
+            abstract=TEXT(vector=Positions, analyzer=StemmingAnalyzer()),
+            content=TEXT(vector=Positions, analyzer=StemmingAnalyzer())
             )
 
-def getPath():
-    return "/home/simone/Documents/UNI/GestioneAvanzataInfo/esercizi"
+def getModTime(path):
+    return time.ctime(os.path.getmtime(path))
 
-def getModTime(pathToFile):
-    return time.ctime(os.path.getmtime(pathToFile))
+def getCreationTime(path):
+    return time.ctime(os.path.getctime(path))
 
-def getCreationTime(pathToFile):
-    return time.ctime(os.path.getctime(pathToFile))
-
-def getIndexPath():
-    return "index"
-
-def gatherDocs():
-    "gather documents into dir and put into an array files"
-    files = [f for f in listdir(get_path()) if isfile(join(get_path(), f))]
-    return files
-
+def getFileList(dir, type):
+    onlyfiles = [f for f in listdir(dir) if isfile(join(dir, f)) and splitext(f)[1] == type]
+    return onlyfiles
 
 

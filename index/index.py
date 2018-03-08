@@ -12,19 +12,33 @@ class DocumentIndex():
         # The schema specifies the fields of documents in an index
         self.schema = schema
 
+        # Write
+        self.writer = None
+
     # Method to index all the documents from scratch
     def cleanIndex(self, dirname):
         self.ix = index.create_in(dirname, schema=self.schema)
-        writer = self.ix.writer()
-        writer.commit()
 
     def open(self, dir):
         self.ix = index.open_dir(dir)
 
+    def beginIndexing(self):
+        self.writer = self.ix.writer(procs=4, limitmb=256, multisegment=True)
+
+    def endIndexing(self):
+        self.writer.commit(optimize=True)
+
     def addDoc(self, path, doc):
-        writer = self.ix.writer()
-        writer.add_document(path=(path), title=(doc.title), authors=(",".join(doc.authors)),pubdate=(doc.date), abstract=(doc.abstract),content=(doc.body))
-        writer.commit(optimize=True)
+        self.writer.add_document(
+            path=path,
+            title=doc.title,
+            authors=",".join(doc.authors),
+            pubdate=doc.year + " " + doc.month + " " + doc.day,
+            abstract=doc.abstract,
+            content=doc.body
+        )
+
+
 
 
     # Method to re-index a document

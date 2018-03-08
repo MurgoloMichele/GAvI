@@ -12,12 +12,16 @@ class XMLDocument(xml.sax.ContentHandler):
     PARSE_DATE_DAY = 6
     PARSE_DATE_MONTH = 7
     PARSE_DATE_YEAR = 8
+    PARSE_ABSTRACT = 9
+    PARSE_BODY = 10
 
     def __init__(self):
         self.state = XMLDocument.PARSE_NONE
         self.title = ""
         self.authors = []
-        self.date = "1/1/1970"
+        self.day = "01"
+        self.month = "01"
+        self.year = "1970"
         self.abstract = ""
         self.body = ""
 
@@ -51,8 +55,14 @@ class XMLDocument(xml.sax.ContentHandler):
             elif name == "year":
                 self.state = XMLDocument.PARSE_DATE_YEAR
 
+        elif name == "abstract":
+            self.state = XMLDocument.PARSE_ABSTRACT
+
+        elif name == "body":
+            self.state = XMLDocument.PARSE_BODY
+
     def endElement(self, name):
-        if name == "contrib-group" or name == "date":
+        if name == "contrib-group" or name == "date" or name == "abstract" or name == "body":
             self.state = XMLDocument.PARSE_NONE
 
     def characters(self, content):
@@ -72,14 +82,19 @@ class XMLDocument(xml.sax.ContentHandler):
 
         # Parse date
         elif self.state == XMLDocument.PARSE_DATE_DAY:
-            self.date = content
+            self.day = str(int(content)).zfill(2)
             self.state = XMLDocument.PARSE_DATE
 
         elif self.state == XMLDocument.PARSE_DATE_MONTH:
-            self.date += "/" + content
+            self.month = str(int(content)).zfill(2)
             self.state = XMLDocument.PARSE_DATE
 
         elif self.state == XMLDocument.PARSE_DATE_YEAR:
-            self.date += "/" + content
+            self.year = content
             self.state = XMLDocument.PARSE_DATE
 
+        elif self.state == XMLDocument.PARSE_ABSTRACT:
+            self.abstract += content
+
+        elif self.state == XMLDocument.PARSE_BODY:
+            self.body += content

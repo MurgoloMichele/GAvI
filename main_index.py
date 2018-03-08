@@ -7,11 +7,6 @@ from docretrieve import *
 from whoosh.qparser import QueryParser
 
 
-def getfilelist(dir, type):
-    onlyfiles = [f for f in listdir(dir) if isfile(join(dir, f)) and splitext(f)[1] == type]
-    return onlyfiles
-
-
 def parseDocument(path):
     # Create the xml parser
     parser = xml.sax.make_parser()
@@ -25,27 +20,39 @@ def parseDocument(path):
 
 
 # working dir
-dir = "/home/davide/Desktop/00"
+working_dir = "/home/davide/Desktop/benchmark/pmc-00"
+file_dir = working_dir + "/00"
 
 # create new index
 index = DocumentIndex(getSchema())
-index.cleanIndex(dir)
+index.cleanIndex(working_dir)
 
 # list of file to parse
-files = getfilelist(dir, ".nxml")
+files = getFileList(file_dir, ".nxml")
 
 # add each file to the index
+i = 0
+totDocs = len(files)
+start = time.time()
+
+index.beginIndexing()
 for f in files:
-    doc = parseDocument(join(dir, f))
+    doc = parseDocument(join(file_dir, f))
     index.addDoc(f, doc)
-    print(doc.title)
+    i = i + 1
+    print(i, "/", totDocs)
+index.endIndexing()
+
+end = time.time()
+print("Parsed ", totDocs , " docs in ", end - start, "s")
 
 
-index.open(dir)
+# Try a query
+index.open(working_dir)
 
 searcher = index.ix.searcher()
-parser = QueryParser("title", index.ix.schema)
-query = parser.parse(u"circulating")
+parser = QueryParser("abstract", index.ix.schema)
+query = parser.parse(u"regression")
 results = searcher.search(query)
 for r in results:
     print(r)
