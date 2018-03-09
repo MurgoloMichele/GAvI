@@ -27,7 +27,7 @@ def createIndex(working_dir):
     doc_index.cleanIndex(working_dir)
 
     # Get dir list
-    dir_list = os.listdir(working_dir)
+    dir_list = getDirList(working_dir)
 
     for dir in dir_list:
         # list of file to parse
@@ -56,7 +56,7 @@ def createIndex(working_dir):
 
 
 # working dir
-working_dir = "/home/davide/Desktop/benchmark/pmc-00"
+working_dir = "/home/cthulhu/Scaricati/pmc-10"
 doc_index = createIndex(working_dir)
 
 # Try a query
