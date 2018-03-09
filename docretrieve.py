@@ -30,5 +30,7 @@ def getFileList(dir, type):
     onlyfiles = [f for f in listdir(dir) if isfile(join(dir, f)) and splitext(f)[1] == type]
     return onlyfiles
 
-
+def getDirList(dir):
+    onlydir = [f for f in listdir(dir) if not isfile(join(dir, f))]
+    return onlydir
 
