@@ -14,7 +14,7 @@ def getSchema():
     return Schema(
             path=ID(unique=True, stored=True),
             title=TEXT(analyzer=StemmingAnalyzer()),
-            authors=KEYWORD(stored=True, commas=True, scorable=True, lowercase=True),
+            authors=TEXT(stored=True),
             pubdate=DATETIME(stored=True),
             abstract=TEXT(vector=Positions, analyzer=StemmingAnalyzer()),
             content=TEXT(vector=Positions, analyzer=StemmingAnalyzer())
@@ -33,4 +33,3 @@ def getFileList(dir, type):
 def getDirList(dir):
     onlydir = [f for f in listdir(dir) if not isfile(join(dir, f))]
     return onlydir
-

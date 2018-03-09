@@ -1,19 +1,16 @@
 from whoosh.qparser import QueryParser
 
 # retrieve documents from a given query
-def search_doc(query):
-    searcher = doc_index.ix.searcher()
-    parser = QueryParser("content", doc_index.ix.schema)
+def search_doc(indice, field, query):
+    searcher = indice.ix.searcher()
+    parser = QueryParser(field, indice.ix.schema)
     q = parser.parse(query)
-
+    print(q)
     # with statement so the searcher is automatically closed when you’re done with it
-    with doc_index.ix.searcher() as s:
+    with indice.ix.searcher() as s:
         results = searcher.search(q, limit=None, terms=True)
 
-    print_results()
-
-# print all results
-def print_results():
+    # print results
     for r in results:
         print(r)
 
