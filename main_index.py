@@ -1,57 +1,69 @@
 import xml.sax
-from os.path import isfile, join, splitext
+from whoosh.qparser import QueryParser
 
 from parse.xmldocument import XMLDocument
 from index.index import DocumentIndex
 from docretrieve import *
-from whoosh.qparser import QueryParser
 
 
+# Parse a nxml document
 def parseDocument(path):
     # Create the xml parser
-    parser = xml.sax.make_parser()
+    doc_parser = xml.sax.make_parser()
+
     # Create the document handler
     document = XMLDocument()
+
     # Parse the document
-    parser.setContentHandler(document)
-    parser.setFeature(xml.sax.handler.feature_external_ges, False)
-    parser.parse(path)
+    doc_parser.setContentHandler(document)
+    doc_parser.setFeature(xml.sax.handler.feature_external_ges, False)
+    doc_parser.parse(path)
     return document
+
+# Create the index
+def createIndex(working_dir):
+    # create new index
+    doc_index = DocumentIndex(getSchema())
+    doc_index.cleanIndex(working_dir)
+
+    # Get dir list
+    dir_list = os.listdir(working_dir)
+
+    for dir in dir_list:
+        # list of file to parse
+        file_dir = working_dir + "/" + dir
+        files = getFileList(file_dir, ".nxml")
+
+        i = 0
+        tot_docs = len(files)
+        start = time.time()
+
+        # add each file to the index
+        doc_index.beginIndexing()
+        for f in files:
+            i = i + 1
+            print(dir + "/" + f , "  " , i, "/", tot_docs)
+            doc = parseDocument(join(file_dir, f))
+            doc_index.addDoc(f, doc)
+
+        doc_index.endIndexing()
+
+        # Print stats
+        end = time.time()
+        print("Parsed ", tot_docs, " docs in ", end - start, "s")
+
+    return doc_index
 
 
 # working dir
 working_dir = "/home/davide/Desktop/benchmark/pmc-00"
-file_dir = working_dir + "/00"
-
-# create new index
-index = DocumentIndex(getSchema())
-index.cleanIndex(working_dir)
-
-# list of file to parse
-files = getFileList(file_dir, ".nxml")
-
-# add each file to the index
-i = 0
-totDocs = len(files)
-start = time.time()
-
-index.beginIndexing()
-for f in files:
-    doc = parseDocument(join(file_dir, f))
-    index.addDoc(f, doc)
-    i = i + 1
-    print(i, "/", totDocs)
-index.endIndexing()
-
-end = time.time()
-print("Parsed ", totDocs , " docs in ", end - start, "s")
-
+doc_index = createIndex(working_dir)
 
 # Try a query
-index.open(working_dir)
+doc_index.openIndex(working_dir)
 
-searcher = index.ix.searcher()
-parser = QueryParser("abstract", index.ix.schema)
+searcher = doc_index.ix.searcher()
+parser = QueryParser("abstract", doc_index.ix.schema)
 query = parser.parse(u"regression")
 results = searcher.search(query)
 for r in results:
