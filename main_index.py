@@ -62,4 +62,7 @@ working_dir = "/home/simone/Desktop/pmc-00"
 # Try a query
 doc_index = DocumentIndex(getSchema())
 doc_index.openIndex(working_dir)
-search_doc(doc_index, "authors", "Eriksson OR Mikael")
+
+src = Searcher(doc_index)
+res = src.search_doc("authors", "Eriksson OR Mikael")
+print(list(res.docs()))

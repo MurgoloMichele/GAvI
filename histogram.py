@@ -4,23 +4,27 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# list of queries results
-q_result = [3, 12, 5, 18, 45]
+class Histogram:
 
-# list of queries names
-q_name = ('query1', 'query2', 'query3', 'query4', 'query5')
-y_pos = np.arange(len(q_name))
+    def __init__(self, q_results):
+        # list of queries results
+        self.result = q_results
 
-# create bars
-plt.bar(y_pos, q_result)
+    def plot(self):
+        # list of queries names
+        q_name = ('query1', 'query2', 'query3', 'query4', 'query5')
+        y_pos = np.arange(len(q_name))
 
-# create names on the x-axis
-plt.xticks(y_pos + .4, q_name, color='red')
-plt.yticks(color='red')
+        # create bars
+        plt.bar(y_pos, self.result)
 
-# add title and name to the axes
-plt.title("Queries compare Histogram")
-plt.xlabel("Query name")
-plt.ylabel("Query result")
+        # create names on the x-axis
+        plt.xticks(y_pos + .4, q_name, color='red')
+        plt.yticks(color='red')
 
-plt.show()
+        # add title and name to the axes
+        plt.title("Queries compare Histogram")
+        plt.xlabel("Query name")
+        plt.ylabel("Query result")
+
+        plt.show()
