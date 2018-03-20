@@ -17,7 +17,7 @@ def getSchema():
             authors=KEYWORD(stored=True, commas=True, scorable=True, lowercase=True),
             pubdate=DATETIME(stored=True),
             abstract=TEXT(vector=Positions, analyzer=StemmingAnalyzer()),
-            content=TEXT(vector=Positions, analyzer=StemmingAnalyzer())
+            content=TEXT(vector=Positions, analyzer=StemmingAnalyzer(), spelling=True)
             )
 
 def getModTime(path):
