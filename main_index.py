@@ -3,6 +3,7 @@ from whoosh.qparser import QueryParser
 
 from parse.xmldocument import XMLDocument
 from index.index import DocumentIndex
+from index.searcher import DocumentSearcher
 from docretrieve import *
 
 
@@ -56,15 +57,26 @@ def createIndex(working_dir):
 
 
 # working dir
-working_dir = "/home/davide/Desktop/benchmark/pmc-00"
-doc_index = createIndex(working_dir)
+working_dir = "/home/davide/Desktop/btest"
+#doc_index = createIndex(working_dir)
 
 # Try a query
-doc_index.openIndex(working_dir)
+#doc_index.openIndex(working_dir)
 
-searcher = doc_index.ix.searcher()
-parser = QueryParser("abstract", doc_index.ix.schema)
-query = parser.parse(u"regression")
-results = searcher.search(query)
+index = DocumentIndex(getSchema())
+index.openIndex(working_dir)
+
+searcher = DocumentSearcher()
+results = searcher.multiFieldSearch(index,
+                {
+                    "title": "*",
+                    "content": "*",
+                    "authors": "Susanne",
+                }
+            )
+
 for r in results:
     print(r)
+
+
+

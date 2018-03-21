@@ -13,11 +13,11 @@ from os.path import isfile, join, splitext
 def getSchema():
     return Schema(
             path=ID(unique=True, stored=True),
-            title=TEXT(analyzer=StemmingAnalyzer()),
-            authors=KEYWORD(stored=True, commas=True, scorable=True, lowercase=True),
+            title=TEXT(analyzer=StemmingAnalyzer(), stored=True, field_boost=2.0),
+            authors=TEXT(stored=True),
             pubdate=DATETIME(stored=True),
-            abstract=TEXT(vector=Positions, analyzer=StemmingAnalyzer()),
-            content=TEXT(vector=Positions, analyzer=StemmingAnalyzer())
+            abstract=TEXT(vector=Positions, analyzer=StemmingAnalyzer(), stored=True),
+            content=TEXT(vector=Positions, analyzer=StemmingAnalyzer(), stored=True)
             )
 
 def getModTime(path):

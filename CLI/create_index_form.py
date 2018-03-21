@@ -39,7 +39,6 @@ class IndexForm(npyscreen.ActionForm):
 
     def on_cancel(self):
         self.wgworkingdir.value = ""
-
         self.parentApp.setNextForm("MAIN")
 
     # Parse a nxml document
@@ -92,6 +91,4 @@ class IndexForm(npyscreen.ActionForm):
             self.refresh()
 
             doc_index.endIndexing()
-
-        return doc_index
 
