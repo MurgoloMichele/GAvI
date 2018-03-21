@@ -17,7 +17,7 @@ class QueryBenchmark:
         # Create the xml parser
         parser = xml.sax.make_parser()
         # Create the document handler
-        document = XMLQuery()
+        document = XMLQuery(query_num)
         # Parse the document
         parser.setContentHandler(document)
         parser.setFeature(xml.sax.handler.feature_external_ges, False)

@@ -8,9 +8,9 @@ class XMLQuery(xml.sax.ContentHandler):
     PARSE_QUERY = 2
     PARSE_END = 3
 
-    def __init__(self):
+    def __init__(self, query_num):
         self.state = XMLQuery.PARSE_NONE
-        self.num = "10"
+        self.num = str(query_num)
         self.text = ""
 
     def startElement(self, name, attr):
