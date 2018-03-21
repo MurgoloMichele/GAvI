@@ -1,6 +1,6 @@
 import xml.sax
 
-from xmlquery import XMLQuery
+from benchmark.xmlquery import XMLQuery
 
 
 class QueryBenchmark:

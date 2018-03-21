@@ -13,10 +13,7 @@ class Searcher:
         q = parser.parse(query)
         # print the query
         #print(q)
-        # with statement so the searcher is automatically closed when you’re done with it
-        with self.indice.ix.searcher() as s:
-            results = searcher.search(q, limit=None, terms=True)
-
+        results = self.indice.ix.searcher().search(q, limit=None, terms=True)
         # see results class whoosh
         return results
 

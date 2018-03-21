@@ -4,6 +4,7 @@ from parse.xmldocument import XMLDocument
 from index.index import DocumentIndex
 from docretrieve import *
 from searcher import *
+from benchmark.querybenchmark import *
 
 
 # Parse a nxml document
@@ -58,11 +59,17 @@ def createIndex(working_dir):
 # working dir
 working_dir = "/home/simone/Desktop/pmc-00"
 #doc_index = createIndex(working_dir)
+QUERY_FILE = "/home/simone/Documents/UNI/GestioneAvanzataInfo/progetto/GAvI/query/topics2015B.xml"
+RES_FILE = "/home/simone/Documents/UNI/GestioneAvanzataInfo/progetto/GAvI/queryres/qrels-treceval-2015.txt"
 
 # Try a query
 doc_index = DocumentIndex(getSchema())
 doc_index.openIndex(working_dir)
 
+benchmark = QueryBenchmark(QUERY_FILE, 6, RES_FILE, QueryBenchmark.MODEL_COMPARISON_BENCHMARK)
 src = Searcher(doc_index)
-res = src.search_doc("authors", "Eriksson OR Mikael")
-print(list(res.docs()))
+res = src.search_doc('content', benchmark.query)
+print(benchmark.query)
+for i in res:
+    print(i["path"])
+print(len(benchmark.expect_res))
