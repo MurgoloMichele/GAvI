@@ -32,7 +32,7 @@ class QueryBenchmark:
             for line in document:
                 arr = (line.replace('\n','\t')).split('\t')
                 if(arr[0] == str(query_num)):
-                    documents_expect.append(arr[2])
+                    documents_expect.append(arr[2] + ".nxml")
         return documents_expect
 
     def exec(self):

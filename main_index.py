@@ -59,17 +59,22 @@ def createIndex(working_dir):
 # working dir
 working_dir = "/home/simone/Desktop/pmc-00"
 #doc_index = createIndex(working_dir)
-QUERY_FILE = "/home/simone/Documents/UNI/GestioneAvanzataInfo/progetto/GAvI/query/topics2015B.xml"
-RES_FILE = "/home/simone/Documents/UNI/GestioneAvanzataInfo/progetto/GAvI/queryres/qrels-treceval-2015.txt"
+QUERY_FILE = "/home/simone/Documents/UNI/GestioneAvanzataInfo/progetto/GAvI/query/topics2014.xml"
+RES_FILE = "/home/simone/Documents/UNI/GestioneAvanzataInfo/progetto/GAvI/queryres/qrels-treceval-2014.txt"
 
 # Try a query
 doc_index = DocumentIndex(getSchema())
 doc_index.openIndex(working_dir)
 
-benchmark = QueryBenchmark(QUERY_FILE, 6, RES_FILE, QueryBenchmark.MODEL_COMPARISON_BENCHMARK)
+benchmark = QueryBenchmark(QUERY_FILE, 3, RES_FILE, QueryBenchmark.MODEL_COMPARISON_BENCHMARK)
 src = Searcher(doc_index)
 res = src.search_doc('content', benchmark.query)
+
 print(benchmark.query)
+print("ritornati: ", len(res.docs()))
+print("attesi: ", len(benchmark.expect_res))
+
+ret_doc_set, exp_doc_set = set(), set(benchmark.expect_res)
 for i in res:
-    print(i["path"])
-print(len(benchmark.expect_res))
+    ret_doc_set.add(i["path"])
+print("intersezione dei due insiemi: ", len(ret_doc_set & exp_doc_set))

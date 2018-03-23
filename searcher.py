@@ -1,4 +1,5 @@
 from whoosh.qparser import QueryParser
+from whoosh import qparser
 
 class Searcher:
 
@@ -9,10 +10,10 @@ class Searcher:
     # retrieve documents from a given query
     def search_doc(self, field, query):
         searcher = self.indice.ix.searcher()
-        parser = QueryParser(field, self.indice.ix.schema)
+        parser = qparser.QueryParser(field, self.indice.ix.schema, group = qparser.OrGroup)
         q = parser.parse(query)
         # print the query
-        #print(q)
+        # print(q)
         results = self.indice.ix.searcher().search(q, limit=None, terms=True)
         # see results class whoosh
         return results
