@@ -24,7 +24,7 @@ def parseDocument(path):
     return document
 
 
-dir = "/home/davide/Desktop/benchmark/pmc-00/00"
+dir = "/home/davide/Desktop/btest/doc2"
 files = getFileList(dir, ".nxml")
 print("File to analyze: ", len(files))
 input("Premi un tasto per iniziare")
@@ -32,6 +32,4 @@ for f in files:
     print(f)
     doc = parseDocument(join(dir, f))
     print(doc.title)
-    print(doc.authors)
-    print(doc.date)
     print()

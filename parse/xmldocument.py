@@ -62,14 +62,13 @@ class XMLDocument(xml.sax.ContentHandler):
             self.state = XMLDocument.PARSE_BODY
 
     def endElement(self, name):
-        if name == "contrib-group" or name == "date" or name == "abstract" or name == "body":
+        if name == "contrib-group" or name == "date" or name == "abstract" or name == "body" or name == "article-title":
             self.state = XMLDocument.PARSE_NONE
 
     def characters(self, content):
         # Parse title
         if self.state == XMLDocument.PARSE_TITLE:
             self.title += content;
-            self.state = XMLDocument.PARSE_NONE
 
         # Parse authors
         elif self.state == XMLDocument.PARSE_AUTHOR_SURNAME:
