@@ -4,6 +4,8 @@ import os.path
 from index.index import DocumentIndex
 from index.searcher import DocumentSearcher
 from docretrieve import *
+from correction.query_correction import *
+
 
 from whoosh import scoring
 
@@ -34,6 +36,13 @@ class QueryForm(npyscreen.ActionForm):
 
             index = DocumentIndex(getSchema())
             index.openIndex(self.wgworkingdir.value)
+
+            corrections = editDistanceCorrection(self.wgbody.value, index)
+            corrections += editDistanceCorrection(self.wgtitle.value, index)
+
+            if len(corrections) > 0:
+                self.wgerror.value = "Did you mean " + corrections[0][1] + "?"
+                self.wgerror.hidden = False
 
             model = scoring.BM25F
             if self.wgmodel.value == 1:

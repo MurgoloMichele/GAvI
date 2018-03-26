@@ -38,7 +38,6 @@ class IndexForm(npyscreen.ActionForm):
             self.wgerror.hidden = False
 
     def on_cancel(self):
-        self.wgworkingdir.value = ""
         self.parentApp.setNextForm("MAIN")
 
     # Parse a nxml document
