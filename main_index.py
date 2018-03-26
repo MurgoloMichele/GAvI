@@ -66,11 +66,11 @@ RES_FILE = "/home/simone/Documents/UNI/GestioneAvanzataInfo/progetto/GAvI/queryr
 doc_index = DocumentIndex(getSchema())
 doc_index.openIndex(working_dir)
 
-benchmark = QueryBenchmark(QUERY_FILE, 3, RES_FILE, QueryBenchmark.MODEL_COMPARISON_BENCHMARK)
+benchmark = QueryBenchmark(QUERY_FILE, 5, RES_FILE, QueryBenchmark.MODEL_COMPARISON_BENCHMARK)
 src = Searcher(doc_index)
 res = src.search_doc('content', benchmark.query)
 
-print(benchmark.query)
+print("query: ", benchmark.query)
 print("ritornati: ", len(res.docs()))
 print("attesi: ", len(benchmark.expect_res))
 
