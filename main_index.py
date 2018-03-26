@@ -4,6 +4,7 @@ from whoosh.qparser import QueryParser
 from parse.xmldocument import XMLDocument
 from index.index import DocumentIndex
 from docretrieve import *
+from query_correction import *
 
 
 # Parse a nxml document
@@ -56,15 +57,11 @@ def createIndex(working_dir):
 
 
 # working dir
-working_dir = "/home/cthulhu/Scaricati/pmc-10"
-doc_index = createIndex(working_dir)
+working_dir = "/home/davide/Desktop/btest"
+#doc_index = createIndex(working_dir)
 
 # Try a query
+doc_index = DocumentIndex(getSchema())
 doc_index.openIndex(working_dir)
 
-searcher = doc_index.ix.searcher()
-parser = QueryParser("abstract", doc_index.ix.schema)
-query = parser.parse(u"regression")
-results = searcher.search(query)
-for r in results:
-    print(r)
+queryCorrection("isoorms devoid of amino terminal", doc_index)
