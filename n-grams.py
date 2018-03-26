@@ -18,4 +18,4 @@ from docretrieve import *
 from query_correction import *
 
 query = queryCorrection()
-print(query.spellCheck("efectivnes"))
+print(query.spellCheck("efectivness"))

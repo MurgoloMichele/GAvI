@@ -25,7 +25,8 @@ class queryCorrection():
 		return ngrams(word,q)
 
 	def spellCheck(self, w,thr=0.5):
-		results = []
+		results = None
+		score = 0
 		englishWords = self.queryCorrection(w)
 		if w in englishWords:
 			results.append(w)
@@ -35,7 +36,9 @@ class queryCorrection():
 			print (w_qgrams)
 			for word in englishWords:
 				word_qgrams = self.qgrams(word)
-				if self.jaccard(set(w_qgrams),set(word_qgrams))>=thr:
-					results.append(word)
+				v = self.jaccard(set(w_qgrams),set(word_qgrams))
+				if v >= thr and v > score:
+					results = word
+					score = v
 		return (results)
 
