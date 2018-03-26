@@ -2,27 +2,40 @@ from whoosh import qparser
 from whoosh.spelling import ListCorrector
 from whoosh.spelling import SimpleQueryCorrector
 
-def queryCorrection(query, index):
+from nltk.util import ngrams
 
-    # Parse the user query string
-    qp = qparser.QueryParser("content", index.ix.schema)
-    q = qp.parse(query)
+class queryCorrection():
+	def __init__(self):
+		f = open('words.txt')
+		words = f.read()
+		self.wordlist = words.split('\n')
+		
 
-    wordlist = []
-    f = open('words.txt')
-    words = f.read()
-    wordlist = words.split('\n')
-			
+	def queryCorrection(self, query):
+		c1 = ListCorrector(self.wordlist)	
+		return c1.suggest(query, limit=100, maxdist=3)
 
-    # Try correcting the query
-    with index.ix.searcher() as s:
-        c1 = ListCorrector(wordlist)	
-        print(c1.suggest(query,limit=5,maxdist=2))
 
-        '''		
-        corrected = s.correct_query(q, query)
-        print(corrected.query)
-        print(corrected.string)
-        if corrected.query != q:
-        print ("Did you mean:", corrected.string)
-        '''
+
+	def jaccard(self, set_1, set_2):
+		return len(set_1.intersection(set_2)) / float(len(set_1.union(set_2)))
+
+	def qgrams(self, word, q=3):
+		word = '#'*(q-1)+word+'$'*(q-1)
+		return ngrams(word,q)
+
+	def spellCheck(self, w,thr=0.5):
+		results = []
+		englishWords = self.queryCorrection(w)
+		if w in englishWords:
+			results.append(w)
+		else:
+			w_qgrams = self.qgrams(w)
+			w_qgrams = list(w_qgrams)
+			print (w_qgrams)
+			for word in englishWords:
+				word_qgrams = self.qgrams(word)
+				if self.jaccard(set(w_qgrams),set(word_qgrams))>=thr:
+					results.append(word)
+		return (results)
+
