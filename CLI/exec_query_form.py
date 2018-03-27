@@ -37,8 +37,9 @@ class QueryForm(npyscreen.ActionForm):
             index = DocumentIndex(getSchema())
             index.openIndex(self.wgworkingdir.value)
 
-            corrections = editDistanceCorrection(self.wgbody.value, index)
-            corrections += editDistanceCorrection(self.wgtitle.value, index)
+            corrector = QueryCorrection()
+            corrections = corrector.editDistanceCorrection(self.wgbody.value, index)
+            corrections += corrector.editDistanceCorrection(self.wgtitle.value, index)
 
             if len(corrections) > 0:
                 self.wgerror.value = "Did you mean " + corrections[0][1] + "?"
