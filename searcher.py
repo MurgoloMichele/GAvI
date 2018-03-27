@@ -11,7 +11,7 @@ class Searcher:
 
     def __init__(self, indice):
         self.indice = indice
-        self.type = "sercher"
+        self.type = "searcher"
 
     # retrieve documents from a given query
     def search_doc(self, field, query):

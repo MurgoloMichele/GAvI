@@ -5,6 +5,8 @@ from index.index import DocumentIndex
 from docretrieve import *
 from searcher import *
 from benchmark.querybenchmark import *
+from precision_recall import *
+from xy_graph import *
 
 
 # Parse a nxml document
@@ -55,6 +57,18 @@ def createIndex(working_dir):
 
     return doc_index
 
+def countDoc():
+    # Get dir list
+    dir_list = getDirList(working_dir)
+    tot_docs = 0
+
+    for dir in dir_list:
+        # list of file to count
+        file_dir = working_dir + "/" + dir
+        files = getFileList(file_dir, ".nxml")
+        tot_docs = tot_docs + len(files)
+
+    return tot_docs
 
 # working dir
 working_dir = "/home/simone/Desktop/pmc-00"
@@ -70,11 +84,21 @@ benchmark = QueryBenchmark(QUERY_FILE, 5, RES_FILE, QueryBenchmark.MODEL_COMPARI
 src = Searcher(doc_index)
 res = src.search_doc('content', benchmark.query)
 
-print("query: ", benchmark.query)
-print("ritornati: ", len(res.docs()))
-print("attesi: ", len(benchmark.expect_res))
+print("# documenti analizzati:", countDoc())
+print("query posta:", benchmark.query)
+print("\n# documenti ritornati:", len(res.docs()))
+print("# documenti attesi:", len(benchmark.expect_res))
 
-ret_doc_set, exp_doc_set = set(), set(benchmark.expect_res)
+ret_doc_set = []
 for i in res:
-    ret_doc_set.add(i["path"])
-print("intersezione dei due insiemi: ", len(ret_doc_set & exp_doc_set))
+    ret_doc_set.append(i["path"])
+
+pr = PrecisionRecall(countDoc())
+precision, recall = [] , []
+for i in range(1,len(ret_doc_set),100):
+    precision.append(pr.precision(benchmark.expect_res, ret_doc_set[:i]))
+    recall.append(pr.recall(benchmark.expect_res, ret_doc_set[:i]))
+
+print(precision)
+graph = GraphXY(recall, precision)
+graph.plot()
