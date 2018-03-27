@@ -91,3 +91,16 @@ class IndexForm(npyscreen.ActionForm):
 
             doc_index.endIndexing()
 
+        self.wgindex.value = "Saving lexicon file..."
+        self.display()
+        self.refresh()
+
+        with doc_index.ix.searcher() as searcher:
+            out_file = open("context_dict.txt", "w")
+            for w in list(searcher.field_terms("content")):
+                out_file.write(str(w))
+                out_file.write("\n")
+
+            out_file.close()
+
+

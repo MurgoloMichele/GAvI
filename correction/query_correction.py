@@ -8,14 +8,25 @@ from whoosh.spelling import ListCorrector
 
 from nltk.util import ngrams
 
+from enchant import DictWithPWL
+from enchant.checker import SpellChecker
+
 
 class QueryCorrection:
 
     def __init__(self):
-        f = open('en_dict.txt')
+        en_dict = self.__load_dict__("en_dict.txt")
+        custom_dict = self.__load_dict__("context_dict.txt")
+
+        self.dict = list(set(en_dict).intersection(set(custom_dict))).sort()
+
+        self.list_corrector = ListCorrector(self.dict)
+        self.spell_checker = SpellChecker(DictWithPWL("en_US", "context_dict.txt"))
+
+    def __load_dict__(self, name):
+        f = open(name)
         words = f.read()
-        self.en_dict = words.split('\n')
-        self.list_corrector = ListCorrector(self.en_dict)
+        return words.split('\n')
 
     def getSuggestions(self, query):
         return self.list_corrector.suggest(query, limit=100, maxdist=3)
@@ -27,12 +38,12 @@ class QueryCorrection:
         word = '#' * (q - 1) + word + '$' * (q - 1)
         return ngrams(word, q)
 
-    def ngramsCorrection(self, w, thr=0.5):
+    def ngramsMatcher(self, w, thr=0.5):
         results = None
         score = 0
         englishWords = self.getSuggestions(w)
         if w in englishWords:
-            results.append(w)
+            results = w
         else:
             w_qgrams = self.qgrams(w)
             w_qgrams = list(w_qgrams)
@@ -43,6 +54,28 @@ class QueryCorrection:
                     results = word
                     score = v
         return results
+
+    def contextCorrection(self, query):
+        self.spell_checker.set_text(query)
+
+        corrections = []
+        for err in self.spell_checker:
+            sug = err.suggest()[0]
+            corrections.append((err.word, sug))
+
+        return corrections
+
+    def ngramsCorrection(self, query):
+        analyzer = RegexTokenizer() | LowercaseFilter() | StopFilter()
+
+        # Try correcting the query
+        corrections = []
+        for token in analyzer(query):
+            corrected = self.ngramsMatcher(token)
+            if corrected != token:
+                corrections.append((token.text, corrected))
+
+        return corrections
 
     def editDistanceCorrection(self, query, index):
 

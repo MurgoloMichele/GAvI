@@ -20,6 +20,7 @@ class QueryForm(npyscreen.ActionForm):
         #self.wgmindate = self.add(npyscreen.TitleDateCombo, name="Pub min date:", value="")
         #self.wgmaxdate = self.add(npyscreen.TitleDateCombo, name="Pub max date:", value="")
         self.wgmodel = self.add(npyscreen.TitleCombo, name="Model:", value=0, values=["BM25", "TF_IDF", "Frequency"], max_height=2)
+        self.wgcorr = self.add(npyscreen.TitleCombo, name="Corrector:", value=0, values=["Edit Distance", "N-Grams", "PyEnchant"], max_height=2)
 
         self.wgerror = self.add(npyscreen.TitleFixedText, name="Error:")
         self.wgerror.hidden = True
@@ -31,6 +32,8 @@ class QueryForm(npyscreen.ActionForm):
         self.parentApp.setNextForm("MAIN")
 
     def on_ok(self):
+        self.wgerror.value = ""
+
         if os.path.isdir(self.wgworkingdir.value):
             self.wgerror.hidden = True
 
@@ -38,8 +41,15 @@ class QueryForm(npyscreen.ActionForm):
             index.openIndex(self.wgworkingdir.value)
 
             corrector = QueryCorrection()
-            corrections = corrector.editDistanceCorrection(self.wgbody.value, index)
-            corrections += corrector.editDistanceCorrection(self.wgtitle.value, index)
+            if self.wgcorr == 0:
+                corrections = corrector.editDistanceCorrection(self.wgbody.value, index)
+                corrections += corrector.editDistanceCorrection(self.wgtitle.value, index)
+            elif self.wgcorr == 1:
+                corrections = corrector.ngramsCorrection(self.wgbody.value)
+                corrections += corrector.ngramsCorrection(self.wgtitle.value)
+            else:
+                corrections = corrector.contextCorrection(self.wgbody.value)
+                corrections += corrector.contextCorrection(self.wgtitle.value)
 
             if len(corrections) > 0:
                 self.wgerror.value = "Did you mean " + corrections[0][1] + "?"
