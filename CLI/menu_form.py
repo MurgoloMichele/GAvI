@@ -20,5 +20,7 @@ class MenuForm(npyscreen.Form):
             self.parentApp.setNextForm("INDEX")
         elif self.wgmenu.value == 1:
             self.parentApp.setNextForm("QUERY")
+        elif self.wgmenu.value == 2:
+            self.parentApp.setNextForm("BENCHMARK")
         elif self.wgmenu.value == 3:
             self.parentApp.setNextForm(None)

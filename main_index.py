@@ -7,6 +7,12 @@ from index.searcher import DocumentSearcher
 from docretrieve import *
 
 
+from index.index import DocumentIndex
+from index.searcher import DocumentSearcher
+from docretrieve import *
+from correction.query_correction import *
+
+
 # Parse a nxml document
 def parseDocument(path):
     # Create the xml parser
@@ -66,17 +72,10 @@ working_dir = "/home/davide/Desktop/btest"
 index = DocumentIndex(getSchema())
 index.openIndex(working_dir)
 
-searcher = DocumentSearcher()
-results = searcher.multiFieldSearch(index,
-                {
-                    "title": "*",
-                    "content": "*",
-                    "authors": "Susanne",
-                }
-            )
-
-for r in results:
-    print(r)
+corrector = QueryCorrection()
+corrections = corrector.ngramsCorrection("mamography")
+for c in corrections:
+    print(c)
 
 
 

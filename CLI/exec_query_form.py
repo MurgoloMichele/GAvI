@@ -12,13 +12,11 @@ from whoosh import scoring
 class QueryForm(npyscreen.ActionForm):
 
     def create(self):
-        self.name = "Exec query"
+        self.name = "Benchmark"
         self.wgworkingdir = self.add(npyscreen.TitleFilename, name="Index dir:", select_dir=True)
         self.wgtitle = self.add(npyscreen.TitleText, name="Title:", value="*")
         self.wgbody = self.add(npyscreen.TitleText, name="Content:", value="")
         self.wgautors = self.add(npyscreen.TitleText, name="Authors:", value="*")
-        #self.wgmindate = self.add(npyscreen.TitleDateCombo, name="Pub min date:", value="")
-        #self.wgmaxdate = self.add(npyscreen.TitleDateCombo, name="Pub max date:", value="")
         self.wgmodel = self.add(npyscreen.TitleCombo, name="Model:", value=0, values=["BM25", "TF_IDF", "Frequency"], max_height=2)
         self.wgcorr = self.add(npyscreen.TitleCombo, name="Corrector:", value=0, values=["Edit Distance", "N-Grams", "PyEnchant"], max_height=2)
 
@@ -41,10 +39,10 @@ class QueryForm(npyscreen.ActionForm):
             index.openIndex(self.wgworkingdir.value)
 
             corrector = QueryCorrection()
-            if self.wgcorr == 0:
+            if self.wgcorr.value == 0:
                 corrections = corrector.editDistanceCorrection(self.wgbody.value, index)
                 corrections += corrector.editDistanceCorrection(self.wgtitle.value, index)
-            elif self.wgcorr == 1:
+            elif self.wgcorr.value == 1:
                 corrections = corrector.ngramsCorrection(self.wgbody.value)
                 corrections += corrector.ngramsCorrection(self.wgtitle.value)
             else:
@@ -61,8 +59,8 @@ class QueryForm(npyscreen.ActionForm):
             elif self.wgmodel.value == 2:
                 model = scoring.Frequency
 
-            searcher = DocumentSearcher(model)
-            results = searcher.multiFieldSearch(index,
+            searcher = DocumentSearcher(index, model)
+            results = searcher.multiFieldSearch(
                {
                    "title": self.wgtitle.value,
                    "content": self.wgbody.value,
@@ -73,10 +71,12 @@ class QueryForm(npyscreen.ActionForm):
             self.wgresults.values = []
             res = []
             for r in results:
+
                 res += [r["path"] + " published on " + r["pubdate"].replace(" ", "/")]
                 res += self.splitText(r["title"], self.wgresults.width - 1)
                 res += [r["authors"][:self.wgresults.width]]
                 #res += self.splitText(r["abstract"], self.wgresults.width - 1)
+
                 res += "\n"
             self.wgresults.values = res
 

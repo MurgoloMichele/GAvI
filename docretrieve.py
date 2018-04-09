@@ -1,4 +1,3 @@
-# recupero documenti dalla dir e inserirli in un indice
 from whoosh.index import *
 from whoosh.fields import *
 from whoosh.formats import *
