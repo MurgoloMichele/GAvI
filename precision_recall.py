@@ -5,10 +5,9 @@
 
 class PrecisionRecall:
 
-    def __init__(self, total):
+    def __init__(self):
         self.type = "PrecisionRecall"
-        self.total = total
-
+        
     def precision(self, relevant, retrieved):
         precision = len(set(relevant) & set(retrieved)) / len(retrieved)
         return precision
