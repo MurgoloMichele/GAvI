@@ -63,6 +63,7 @@ class IndexForm(npyscreen.ActionForm):
         # Get dir list
         dir_list = getDirList(working_dir)
 
+        doc_index.beginIndexing()
         for dir in dir_list:
             # list of file to parse
             file_dir = working_dir + "/" + dir
@@ -72,7 +73,6 @@ class IndexForm(npyscreen.ActionForm):
             tot_docs = len(files)
 
             # add each file to the index
-            doc_index.beginIndexing()
             for f in files:
                 i = i + 1
                 doc = self.parseDocument(join(file_dir, f))
@@ -89,7 +89,7 @@ class IndexForm(npyscreen.ActionForm):
             self.display()
             self.refresh()
 
-            doc_index.endIndexing()
+        doc_index.endIndexing()
 
         self.wgindex.value = "Saving lexicon file..."
         self.display()
