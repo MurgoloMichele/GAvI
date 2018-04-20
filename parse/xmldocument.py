@@ -42,7 +42,7 @@ class XMLDocument(xml.sax.ContentHandler):
                 self.state = XMLDocument.PARSE_AUTHOR_NAME
 
         # Parse date
-        elif name == "date" and attr.getValue("date-type") == "accepted":
+        elif name == "date" and "date-type" in attr.getNames() and attr.getValue("date-type") == "accepted":
             self.state = XMLDocument.PARSE_DATE
 
         elif self.state == XMLDocument.PARSE_DATE:

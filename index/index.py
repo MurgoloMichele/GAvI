@@ -26,7 +26,7 @@ class DocumentIndex:
 
     # Commit the writer
     def endIndexing(self):
-        self.writer.commit
+        self.writer.commit(optimize=True)
 
     # Add a new doc
     def addDoc(self, path, doc):
