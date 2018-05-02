@@ -81,11 +81,17 @@ class XMLDocument(xml.sax.ContentHandler):
 
         # Parse date
         elif self.state == XMLDocument.PARSE_DATE_DAY:
-            self.day = str(int(content)).zfill(2)
+            try:
+                self.day = str(int(content)).zfill(2)
+            except ValueError:
+                self.day = '01'
             self.state = XMLDocument.PARSE_DATE
 
         elif self.state == XMLDocument.PARSE_DATE_MONTH:
-            self.month = str(int(content)).zfill(2)
+            try:
+                self.month = str(int(content)).zfill(2)
+            except ValueError:
+                self.month = '01'
             self.state = XMLDocument.PARSE_DATE
 
         elif self.state == XMLDocument.PARSE_DATE_YEAR:
