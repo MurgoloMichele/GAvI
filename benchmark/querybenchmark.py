@@ -39,7 +39,7 @@ class QueryBenchmark:
         searcher2 = DocumentSearcher(index, model2)
 
         rhistogram = []
-        for i in range(1, 31):
+        for i in range(1, r+1):
             query = self.load_query_text(i)
             expect_res = self.__load_expected_result(i)
 
@@ -72,9 +72,12 @@ class QueryBenchmark:
             ret_doc_set.append(i["path"])
 
         precision, recall = [], []
-        for i in range(1, len(ret_doc_set), 100):
+        for i in range(1, len(ret_doc_set), 10):
             precision.append(self.__precision(expect_res, ret_doc_set[:i]))
             recall.append(self.__recall(expect_res, ret_doc_set[:i]))
+
+        precision.append(0)
+        recall.append(1)
 
         graph = GraphXY(recall, precision)
         graph.plot()

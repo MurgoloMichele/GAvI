@@ -82,7 +82,7 @@ class BenchmarkForm(npyscreen.ActionForm):
             if self.wgcorr.value == 0:
                 bench.precisionRecallBenchmark(doc_index, model1, int(self.wgqueryid.value) + 1)
             else:
-                bench.rprecisionBenchmark(doc_index, model1, model2, 10)
+                bench.rprecisionBenchmark(doc_index, model1, model2, int(self.wgrvalue.value))
 
         else:
             self.wgerror.value = "Not a directory"
@@ -90,4 +90,3 @@ class BenchmarkForm(npyscreen.ActionForm):
 
     def splitText(self, text, n):
         return list(text[i:i+n] for i in range(0, len(text), n))
-
